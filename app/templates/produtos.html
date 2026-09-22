@@ -6,14 +6,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{% static 'style.css' %}">
-    <title>Document</title>
 </head>
 <body>
-    {% if admin %}
-    <p>Servidor: {{ id_servidor }} // ○ Status atual é : {{ status_sistema }}
-        </p>
-    {% else %}
-    <h2>Você não tem permissão pra acesar essa página</h2>
-    {%endif%}
+    <h1>Nossos Produtos:</h1>
+    <ul class="card">
+        {% for i in produtos %}
+        <li>
+        <h2>{{i.nome}}</h2>
+        <h3>Valor: R${{i.preco}}</h3>
+        <p>Qtd. em estoque: {{i.estoque}}</p>
+        </li>
+        {% endfor %}
+    </ul>
 </body>
 </html>
