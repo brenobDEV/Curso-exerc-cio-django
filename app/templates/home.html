@@ -1,26 +1,109 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{% static 'style.css' %}">
-    <title>Document</title>
-</head>
-<body>
-    <nav>
-        <ul>
-            <li><a href="">início</a></li>
-            <li><a href="">Status</a></li>
-            <li><a href="">Perfil</a></li>
-        </ul>
-    </nav>
-    <main>
-        <h1>Sejam muito Bem-Vindos à Shoppeshein</h1>
-        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Esse possimus maiores saepe amet beatae modi vero architecto exercitationem aperiam, in dolorem libero eligendi soluta quis pariatur perferendis qui accusantium culpa.</p>
-        
-        <a href=""><strong/>Clique aqui para entrar</strong></a>
-    </main>
-    
-</body>
-</html>
+{% extends 'base.html' %}
+{% block title %}Início | Shoppeshein{% endblock %}
+{% block content %}
+
+<section class="hero">
+    <div class="hero-content">
+
+        <span class="hero-tag">
+            SUA LOJA ONLINE
+        </span>
+
+        <h1>
+            Encontre o que você precisa em um só lugar.
+        </h1>
+
+        <p>
+            Bem-vindo à Shoppeshein. Encontre produtos selecionados,
+            preços acessíveis e uma experiência de compra simples,
+            rápida e segura.
+        </p>
+
+        <div class="hero-buttons">
+
+            <a href="{% url 'produtos' %}" class="btn btn-primary">
+                Explorar produtos
+            </a>
+
+            <a href="{% url 'perfil' %}" class="btn btn-secondary">
+                Meu perfil
+            </a>
+
+        </div>
+
+    </div>
+
+</section>
+<section class="features">
+    <div class="section-header">
+        <span>POR QUE COMPRAR CONOSCO?</span>
+
+        <h2>
+            Uma experiência pensada para você
+        </h2>
+    </div>
+
+
+    <div class="feature-grid">
+
+        <article class="feature-card">
+            <div class="feature-icon">🛍️</div>
+
+            <h3>Produtos selecionados</h3>
+
+            <p>
+                Trabalhamos com uma seleção de produtos
+                para facilitar sua busca e tornar sua compra
+                mais prática.
+            </p>
+        </article>
+
+
+        <article class="feature-card">
+            <div class="feature-icon">💰</div>
+
+            <h3>Preços acessíveis</h3>
+
+            <p>
+                Encontre opções para diferentes necessidades
+                e orçamentos, sempre com informações claras
+                sobre os valores.
+            </p>
+        </article>
+
+
+        <article class="feature-card">
+            <div class="feature-icon">🔒</div>
+
+            <h3>Compra segura</h3>
+
+            <p>
+                Priorizamos uma experiência organizada,
+                transparente e segura durante sua jornada
+                na loja.
+            </p>
+        </article>
+
+    </div>
+
+</section>
+<section class="cta">
+    <div>
+        <span>COMECE AGORA</span>
+
+        <h2>
+            Pronto para encontrar seu próximo produto?
+        </h2>
+
+        <p>
+            Confira nosso catálogo e descubra as opções
+            disponíveis em nossa loja.
+        </p>
+    </div>
+
+    <a href="{% url 'produtos' %}" class="btn btn-light">
+        Ver produtos
+    </a>
+
+</section>
+{% endblock %}

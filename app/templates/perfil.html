@@ -1,18 +1,85 @@
-{% load static %}
 
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{% static 'style.css' %}">
-    <title>Document</title>
-</head>
-<body>
+{% extends 'base.html' %}
 
-<p>Olá {{ nome_usuario }}</p>
-<p>Seu cargo é {{ cargo }}</p>
-<p> Seu setor escolhido é {{ setor }}</p>
-    
-</body>
-</html>
+{% block title %}Meu Perfil | Shoppeshein{% endblock %}
+
+{% block content %}
+
+<section class="profile-page">
+<div class="profile-header">
+
+    <div class="profile-avatar">
+        {{ nome_usuario|first|upper }}
+    </div>
+
+    <div>
+        <span>MINHA CONTA</span>
+
+        <h1>
+            Olá, {{ nome_usuario }}!
+        </h1>
+
+        <p>
+            Confira abaixo as informações do seu perfil.
+        </p>
+    </div>
+
+</div>
+
+
+<div class="profile-grid">
+
+    <article class="profile-card">
+
+        <span class="profile-label">
+            USUÁRIO
+        </span>
+
+        <h2>
+            {{ nome_usuario }}
+        </h2>
+
+        <p>
+            Nome associado à sua conta.
+        </p>
+
+    </article>
+
+
+    <article class="profile-card">
+
+        <span class="profile-label">
+            CARGO
+        </span>
+
+        <h2>
+            {{ cargo }}
+        </h2>
+
+        <p>
+            Função ou cargo cadastrado no sistema.
+        </p>
+
+    </article>
+
+
+    <article class="profile-card">
+
+        <span class="profile-label">
+            SETOR
+        </span>
+
+        <h2>
+            {{ setor }}
+        </h2>
+
+        <p>
+            Setor selecionado para o seu perfil.
+        </p>
+
+    </article>
+
+</div>
+
+</section>
+{% endblock %}

@@ -1,19 +1,76 @@
-{% load static %}
 
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{% static 'style.css' %}">
-    <title>Document</title>
-</head>
-<body>
-    {% if admin %}
-    <p>Servidor: {{ id_servidor }} // ○ Status atual é : {{ status_sistema }}
+{% extends 'base.html' %}
+{% block title %}Status do Sistema | Shoppeshein{% endblock %}
+{% block content %}
+
+<section class="status-page">
+{% if admin %}
+
+    <div class="section-header">
+
+        <span>PAINEL ADMINISTRATIVO</span>
+
+        <h1>
+            Status do sistema
+        </h1>
+
+        <p>
+            Acompanhe as informações atuais do servidor
+            e o funcionamento da plataforma.
         </p>
-    {% else %}
-    <h2>Você não tem permissão pra acesar essa página</h2>
-    {%endif%}
-</body>
-</html>
+
+    </div>
+
+
+    <div class="status-card">
+
+        <div class="status-indicator">
+            <span></span>
+            Sistema monitorado
+        </div>
+
+
+        <div class="status-info">
+
+            <div>
+                <span>ID DO SERVIDOR</span>
+                <strong>{{ id_servidor }}</strong>
+            </div>
+
+
+            <div>
+                <span>STATUS ATUAL</span>
+                <strong>{{ status_sistema }}</strong>
+            </div>
+
+        </div>
+
+    </div>
+
+{% else %}
+
+    <div class="access-denied">
+
+        <div class="access-icon">
+            🔒
+        </div>
+
+        <h1>
+            Acesso restrito
+        </h1>
+
+        <p>
+            Você não possui permissão para acessar
+            o painel de status do sistema.
+        </p>
+
+        <a href="{% url 'home' %}" class="btn btn-primary">
+            Voltar para o início
+        </a>
+
+    </div>
+
+{% endif %}
+
+</section>
+{% endblock %}
