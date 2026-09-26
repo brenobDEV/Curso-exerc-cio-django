@@ -1,22 +1,33 @@
-from django.shortcuts import render
-
+from django.shortcuts import render, redirect, get_object_or_404
+from .models import Produto
+from .forms import ProdutoForm
 
 def home_view(request):
-    return render(request,'home.html')
+    return render(request, 'home.html')
 
 def produtos_view(request):
-    
-    lista_produtos = [
-            {'nome': "Monitor", "preco": 700.00, "estoque": 5},
-            {'nome': "PC Desktop", "preco": 4500.00, "estoque": 2},
-            {'nome': "SmartWach", "preco": 200.00, "estoque": 7},
-            {'nome': "Cadeira Gamer", "preco": 900.00, "estoque": 1},
-            {'nome': "Teclado Mecânico", "preco": 400.00, "estoque": 11},
-    ]
-    
-    context = {'produtos': lista_produtos}
+    lista_produtos = Produto.objects.all()
+    form = ProdutoForm()
 
-    return render(request,'produtos.html', context)
+    if request.method == 'POST':
+        # Se veio 'produto_id', é uma EDIÇÃO (UPDATE)
+        if 'produto_id' in request.POST:
+            produto = get_object_or_404(Produto, id=request.POST.get('produto_id'))
+            form = ProdutoForm(request.POST, instance=produto)
+        # Se NÃO veio, é um NOVO produto (CREATE)
+        else:
+            form = ProdutoForm(request.POST)
+
+        if form.is_valid():
+            form.save()
+            return redirect('produtos')
+
+    context = {
+        'produtos': lista_produtos,
+        'form': form,
+    }
+    
+    return render(request, 'produtos.html', context)
 
 def perfil_view(request):
     context = {'nome_usuario': 'Gustavo' , 'cargo': 'Instrutor' , 'setor': 'TI'}
@@ -24,6 +35,6 @@ def perfil_view(request):
     return render(request,'perfil.html', context)
 
 def status_view(request):
-    context = {'admin': True ,'id_servidor': '127.0.0.1' , 'status_sistema': '200 OK - Online'}
+    context = {'admin': False ,'id_servidor': '127.0.0.1' , 'status_sistema': '200 OK - Online'}
 
     return render(request,'status.html', context)

@@ -1,93 +1,158 @@
 
 {% extends 'base.html' %}
-{% block title %}Produtos | Shoppeshein{% endblock %}
+{% load static %}
+
 {% block content %}
+<main class="py-5">
+  <div class="container">
+    <!-- Cabeçalho da página -->
+    <div class="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom border-secondary border-opacity-25">
+      <div>
+        <h2 class="text-white fw-bold mb-1">Catálogo de Produtos</h2>
+        <p class="text-secondary small mb-0">Confira nossos itens disponíveis em estoque.</p>
+      </div>
 
-<section class="products-page">
-<div class="section-header">
+      <div class="d-flex align-items-center gap-3">
+        <span class="badge badge-pink">{{ produtos|length }} itens encontrados</span>
 
-    <span>NOSSO CATÁLOGO</span>
-
-    <h1>
-        Produtos disponíveis
-    </h1>
-
-    <p>
-        Confira os produtos disponíveis em nossa loja,
-        seus respectivos valores e a quantidade disponível
-        em estoque.
-    </p>
-
-</div>
-
-
-<div class="product-grid">
-
-    {% for i in produtos %}
-
-    <article class="product-card">
-
-        <div class="product-image">
-            🛍️
-        </div>
-
-        <div class="product-info">
-
-            <span class="product-category">
-                Produto
-            </span>
-
-            <h2>
-                {{ i.nome }}
-            </h2>
-
-            <div class="product-price">
-                R$ {{ i.preco }}
-            </div>
-
-            <p class="stock">
-                {% if i.estoque > 0 %}
-                    ✓ {{ i.estoque }} unidades disponíveis
-                {% else %}
-                    ✕ Produto esgotado
-                {% endif %}
-            </p>
-
-            {% if i.estoque > 0 %}
-
-            <button class="btn btn-primary product-button">
-                Comprar agora
-            </button>
-
-            {% else %}
-
-            <button class="btn btn-disabled" disabled>
-                Indisponível
-            </button>
-
-            {% endif %}
-
-        </div>
-
-    </article>
-
-    {% empty %}
-
-    <div class="empty-products">
-
-        <h2>
-            Nenhum produto disponível
-        </h2>
-
-        <p>
-            No momento não encontramos produtos disponíveis
-            em nosso catálogo.
-        </p>
-
+        <!-- Botão "+" na superior direita (CREATE) -->
+        {% if user.is_authenticated %}
+        <button type="button" class="btn btn-primary rounded-circle d-flex align-items-center justify-content-center" 
+                style="width: 40px; height: 40px;" 
+                data-bs-toggle="modal" 
+                data-bs-target="#modalCriarProduto" 
+                title="Cadastrar Novo Produto">
+          <i class="bi bi-plus-lg fs-5"></i>
+        </button>
+        {% endif %}
+      </div>
     </div>
 
-    {% endfor %}
+    <!-- Grid de Produtos -->
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4">
+      {% for item in produtos %}
+      <div class="col">
+        <div class="card-product h-100 p-3 d-flex flex-column position-relative">
+          
+          <!-- Botão de Lápis no Card (UPDATE) -->
+          {% if user.is_authenticated %}
+          <div class="position-absolute top-0 end-0 m-3" style="z-index: 5;">
+            <button type="button" class="btn btn-sm btn-outline-light rounded-circle shadow-sm" 
+                    data-bs-toggle="modal" 
+                    data-bs-target="#modalEditarProduto{{ item.id }}" 
+                    title="Editar {{ item.nome }}">
+              <i class="bi bi-pencil-fill"></i>
+            </button>
+          </div>
+          {% endif %}
 
+          <!-- Bloco da Imagem -->
+          <div class="product-img-box mb-3 position-relative overflow-hidden">
+            {% if item.imagem %}
+              {% if "http://" in item.imagem or "https://" in item.imagem %}
+                <img src="{{ item.imagem }}" alt="{{ item.nome }}" class="w-100 h-100 object-fit-cover rounded">
+              {% else %}
+                <img src="{% static item.imagem %}" alt="{{ item.nome }}" class="w-100 h-100 object-fit-cover rounded">
+              {% endif %}
+            {% else %}
+              <i class="bi bi-box-seam text-secondary fs-1"></i>
+            {% endif %}
+
+            <!-- Badges de Estoque -->
+            {% if item.estoque <= 2 %}
+              <span class="badge bg-danger position-absolute top-0 start-0 m-2">Últimas unidades!</span>
+            {% else %}
+              <span class="badge badge-sale position-absolute top-0 start-0 m-2">Em estoque</span>
+            {% endif %}
+          </div>
+
+          <h5 class="product-title">{{ item.nome }}</h5>
+          
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <span class="product-price mb-0">R$ {{ item.preco|floatformat:2 }}</span>
+            <small class="text-secondary">Qtd: {{ item.estoque }}</small>
+          </div>
+
+          <button class="btn btn-tech-buy w-100 mt-auto">
+            <i class="bi bi-cart-plus me-2"></i> Adicionar
+          </button>
+        </div>
+      </div>
+
+      <!-- MODAL DE EDIÇÃO (UPDATE) - Vinculado ao ID de cada produto -->
+      {% if user.is_authenticated %}
+      <div class="modal fade" id="modalEditarProduto{{ item.id }}" tabindex="-1" aria-labelledby="modalEditarLabel{{ item.id }}" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content bg-dark text-white border-secondary">
+            <div class="modal-header border-secondary">
+              <h5 class="modal-title" id="modalEditarLabel{{ item.id }}">Editar: {{ item.nome }}</h5>
+              <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+            <!-- POST enviado para a mesma view -->
+            <form method="POST" action="{% url 'produtos' %}">
+              {% csrf_token %}
+              <!-- ID oculto para identificar a atualização -->
+              <input type="hidden" name="produto_id" value="{{ item.id }}">
+              
+              <div class="modal-body">
+                <div class="mb-3">
+                  <label class="form-label">Nome do Produto</label>
+                  <input type="text" name="nome" value="{{ item.nome }}" class="form-control bg-dark text-white border-secondary" required>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Preço (R$)</label>
+                  <input type="number" step="0.01" name="preco" value="{{ item.preco }}" class="form-control bg-dark text-white border-secondary" required>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Estoque</label>
+                  <input type="number" name="estoque" value="{{ item.estoque }}" class="form-control bg-dark text-white border-secondary" required>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">URL da Imagem</label>
+                  <input type="text" name="imagem" value="{{ item.imagem }}" class="form-control bg-dark text-white border-secondary">
+                </div>
+              </div>
+              <div class="modal-footer border-secondary">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="submit" class="btn btn-warning">Salvar Alterações</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+      {% endif %}
+
+      {% empty %}
+      <div class="col-12 text-center py-5">
+        <p class="text-secondary">Nenhum produto cadastrado no momento.</p>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</main>
+
+<!-- MODAL DE CRIAÇÃO (CREATE) -->
+{% if user.is_authenticated %}
+<div class="modal fade" id="modalCriarProduto" tabindex="-1" aria-labelledby="modalCriarLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content bg-dark text-white border-secondary">
+      <div class="modal-header border-secondary">
+        <h5 class="modal-title" id="modalCriarLabel">Cadastrar Novo Produto</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
+      </div>
+      <!-- POST enviado para a mesma view -->
+      <form method="POST" action="{% url 'produtos' %}">
+        {% csrf_token %}
+        <div class="modal-body">
+          {{ form.as_p }}
+        </div>
+        <div class="modal-footer border-secondary">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-success">Cadastrar</button>
+        </div>
+      </form>
+    </div>
+  </div>
 </div>
-</section>
+{% endif %}
 {% endblock %}
